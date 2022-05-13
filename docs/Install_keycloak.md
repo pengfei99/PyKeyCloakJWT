@@ -148,7 +148,13 @@ You should now be logged-in to the account console where users can manage their 
 
 ## Step 10. Secure your first app
 
-Let’s try to secure our first application. First step is to register this application with your Keycloak instance:
+To secure an application, we need to create a specific client in our realm, as shown in below Figure. 
+![kc-create-client](../images/kc-create-client.png)
+
+**A client in Keycloak represents a resource that particular users can access, whether for authenticating a user, 
+requesting identity information, or validating an access token.**
+
+Follow below step to register a new client :
 
 1. Open the Keycloak Admin Console (http://localhost:8080/admin/master/console/)
 
@@ -156,10 +162,50 @@ Let’s try to secure our first application. First step is to register this appl
 
 3. Fill in the form with the following values:
 
-    - Client ID: myclient
+    - Client ID: pengfei-dv-app
 
     - Client Protocol: openid-connect
 
-    - Root URL: https://www.keycloak.org/app/
+    - Root URL: https://localhost:8888
 
 4. Click Save
+
+Now you should see a more detailed form as shown in below figure. 
+![kc-create-client-detail](../images/kc-create-client-detail.png)
+
+- Change **Access Type**: set its value to **confidential**.
+
+- **Advance settings**: Set access token lifeSpan 
+![kc-client-advance-setting](../images/kc-client-advance-setting.png)
+
+- **Authentication flow overrides**: set `Direct Grant Flow` value to **direct grant**.
+![kc-client-auth-flow](../images/kc-client-auth-flow.png)
+
+- update the client's credentials: Use **Client Id and Secret** for `Client Authenticator field`.
+![kc-client-creds](../images/kc-client-creds.png)
+
+## Step 11. Test the created client
+Now we can test our newly created client through the REST API to simulate a simple login. Our authentication URL is:
+
+```text
+http://localhost:8080/auth/realms/pengfei-test/protocol/openid-connect/token
+```
+
+Fill out the parameters and set our **client_id** and **client_secret** with our **username** and **password**:
+
+In our case,
+client_id=pengfei-dv-app
+client_secret=enifviJDIpbN5230yfcPo7h2zsifTa2z
+username=toto
+password=toto
+
+```shell
+curl -L -X POST 'http://localhost:8080/auth/realms/pengfei-test/protocol/openid-connect/token' \
+-H 'Content-Type: application/x-www-form-urlencoded' \
+--data-urlencode 'client_id=pengfei-dv-app' \
+--data-urlencode 'grant_type=password' \
+--data-urlencode 'client_secret=enifviJDIpbN5230yfcPo7h2zsifTa2z' \
+--data-urlencode 'scope=openid' \
+--data-urlencode 'username=toto' \
+--data-urlencode 'password=toto'
+```
