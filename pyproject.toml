@@ -6,6 +6,8 @@ authors = ["Pengfei Liu <liu.pengfei@hotmail.fr>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
+PyJWT = {extras = ["crypto"], version = "^2.4.0"}
+jupyter = "^1.0.0"
 
 [tool.poetry.dev-dependencies]
 
