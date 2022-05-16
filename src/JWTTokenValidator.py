@@ -1,11 +1,10 @@
-import calendar
-import os
-import time
-
-from cryptography.hazmat.primitives import serialization
-import jwt
-from jwt import ExpiredSignatureError
 import logging
+import os
+from datetime import datetime
+
+import jwt
+from cryptography.hazmat.primitives import serialization
+from jwt import ExpiredSignatureError
 
 my_logger = logging.getLogger(__name__)
 
@@ -24,7 +23,7 @@ class JWTTokenValidator:
         else:
             return None
 
-    def get_valid_token_payload(self, input_token: str) -> dict:
+    def get_token_payload(self, input_token: str) -> dict:
         payload = None
         header = jwt.get_unverified_header(input_token)
         try:
@@ -41,7 +40,7 @@ class JWTTokenValidator:
         return payload
 
     @staticmethod
-    def get_invalid_token_payload(input_token: str) -> dict:
+    def get_token_payload_without_verification(input_token: str) -> dict:
         payload = jwt.decode(input_token,
                              options={"verify_signature": False,
                                       "verify_exp": False
@@ -50,15 +49,32 @@ class JWTTokenValidator:
         my_logger.debug(f"Read token payload: {payload}")
         return payload
 
+    @staticmethod
+    def show_token_exp_time(input_token: str):
+        payload = jwt.decode(input_token,
+                             options={"verify_signature": False,
+                                      "verify_exp": False
+                                      }
+                             )
+        # token_expiration has int type
+        token_expiration = payload["exp"]
+        utc_time = datetime.utcfromtimestamp(token_expiration).strftime('%Y-%m-%d %H:%M:%S')
+        print(f"Token expiration time in unix ts: {token_expiration}")
+        print(f"Token expiration time in UTC format: {utc_time}")
+
+    @staticmethod
+    def get_current_unix_ts():
+        return int(datetime.now().timestamp())
+
     def is_expired(self, token: str):
         # get expiration margin
         margin = os.getenv("TOKEN_EXP_MARGIN", JWTTokenValidator.DEFAULT_MARGIN)
         # get current timestamp
-        current_ts = calendar.timegm(time.gmtime())
+        current_ts = JWTTokenValidator.get_current_unix_ts()
         # get token payload
         if self.pub_key:
-            payload = self.get_valid_token_payload(token)
+            payload = self.get_token_payload(token)
         else:
-            payload = self.get_invalid_token_payload(token)
+            payload = self.get_token_payload_without_verification(token)
         token_expiration = payload["exp"]
         return True if current_ts + margin > token_expiration else False
