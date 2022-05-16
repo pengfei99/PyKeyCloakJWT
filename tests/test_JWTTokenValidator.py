@@ -4,12 +4,12 @@ import time
 import pytest
 
 from creds import ssp_token
-from src.JWTTokenValidator import JWTTokenValidator
+from src.JwtTokenValidator import JwtTokenValidator
 
 
 @pytest.fixture
 def token_validator():
-    return JWTTokenValidator()
+    return JwtTokenValidator()
 
 
 def test_is_expired(token_validator):
