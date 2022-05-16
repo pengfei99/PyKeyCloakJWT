@@ -170,25 +170,45 @@ Follow below step to register a new client :
 
 4. Click Save
 
-Now you should see a more detailed form as shown in below figure. 
+Now you should see a more detailed form as shown in below figure.
+
 ![kc-create-client-detail](../images/kc-create-client-detail.png)
 
 - Change **Access Type**: set its value to **confidential**.
 
 - **Advance settings**: Set access token lifeSpan 
+
 ![kc-client-advance-setting](../images/kc-client-advance-setting.png)
 
 - **Authentication flow overrides**: set `Direct Grant Flow` value to **direct grant**.
+
 ![kc-client-auth-flow](../images/kc-client-auth-flow.png)
 
 - update the client's credentials: Use **Client Id and Secret** for `Client Authenticator field`.
+
 ![kc-client-creds](../images/kc-client-creds.png)
 
 ## Step 11. Test the created client
-Now we can test our newly created client through the REST API to simulate a simple login. Our authentication URL is:
+
+Note there is modification for the endpoint that generate the JWT token. 
 
 ```text
+# For keycloak >= 17.0. The new endpoint is:
+https://$HOSTNAME/realms/$REALM_NAME/protocol/openid-connect/token
+
+# For keycloak < 17.0. The legacy endpoint is
+https://$HOSTNAME/auth/realms/$REALM_NAME/protocol/openid-connect/token
+```
+
+Now we can test our newly created client through the REST API to simulate a simple login. Base on your keycloak version,
+the authentication URL could be in below form:
+
+```text
+# Before 17.0
 http://localhost:8080/auth/realms/pengfei-test/protocol/openid-connect/token
+
+# Since 17.0
+http://localhost:8080/realms/pengfei-test/protocol/openid-connect/token
 ```
 
 Fill out the parameters and set our **client_id** and **client_secret** with our **username** and **password**:
@@ -196,7 +216,7 @@ Fill out the parameters and set our **client_id** and **client_secret** with our
 In our case,
 client_id=pengfei-dv-app
 client_secret=enifviJDIpbN5230yfcPo7h2zsifTa2z
-username=toto
+username=pengfei
 password=toto
 
 ```shell
@@ -206,6 +226,8 @@ curl -L -X POST 'http://localhost:8080/auth/realms/pengfei-test/protocol/openid-
 --data-urlencode 'grant_type=password' \
 --data-urlencode 'client_secret=enifviJDIpbN5230yfcPo7h2zsifTa2z' \
 --data-urlencode 'scope=openid' \
---data-urlencode 'username=toto' \
+--data-urlencode 'username=pengfei' \
 --data-urlencode 'password=toto'
 ```
+
+Or you can check some example scripts in `../command`.
