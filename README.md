@@ -2,8 +2,8 @@
 
 In this project, we will use https://pypi.org/project/python-keycloak/ to get JWT token from keycloak server
 
-https://python-keycloak-client.readthedocs.io/en/latest/
+https://python-keycloak.readthedocs.io/en/latest/#documentation
 
-Then we will analyze these JWT tokens by using pyJWT
+Then we will analyze these JWT tokens by using **pyJWT**
 
-https://auth0.com/blog/how-to-handle-jwt-in-python/
+https://pyjwt.readthedocs.io/en/stable/
