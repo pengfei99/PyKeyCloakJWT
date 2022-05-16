@@ -7,11 +7,11 @@ authors = ["Pengfei Liu <liu.pengfei@hotmail.fr>"]
 [tool.poetry.dependencies]
 python = "^3.8"
 PyJWT = {extras = ["crypto"], version = "^2.4.0"}
-jupyter = "^1.0.0"
-pytest = "^7.1.2"
 python-keycloak = "^0.27.0"
 
 [tool.poetry.dev-dependencies]
+jupyter = "^1.0.0"
+pytest = "^7.1.2"
 
 [tool.pytest.ini_options]
 log_cli = true
