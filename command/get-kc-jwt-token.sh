@@ -1,12 +1,13 @@
 #!/bin/bash
 
-if [ $# -ne 5 ]; then
+if [ $# -ne 4 ]; then
   echo 1>&2 "Usage: . $0 hostname realm username clientid"
   echo 1>&2 "  options:"
   echo 1>&2 "    hostname: localhost:8081"
   echo 1>&2 "    realm:keycloak-demo"
   echo 1>&2 "    clientid:demo"
   echo 1>&2 "    For verify ssl: use 'y' (otherwise it will send curl post with --insecure)"
+  echo 1>&2 "    To be compatiable with legacy keycloak version(<17.0): use 'l' (otherwise it will use endpoint of the latest keycloak) "
 
   return
 fi
@@ -16,10 +17,14 @@ REALM_NAME=$2
 USERNAME=$3
 CLIENT_ID=$4
 SECURE=$5
+LEGACY=$6
 
 
-
-KEYCLOAK_URL=http://$HOSTNAME/auth/realms/$REALM_NAME/protocol/openid-connect/token
+if [[ $LEGACY = 'y' ]]; then
+  KEYCLOAK_URL=http://$HOSTNAME/auth/realms/$REALM_NAME/protocol/openid-connect/token
+else
+  KEYCLOAK_URL=http://$HOSTNAME/realms/$REALM_NAME/protocol/openid-connect/token
+fi
 
 
 
