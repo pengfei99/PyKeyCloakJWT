@@ -1,18 +1,31 @@
-import json
+import pytest
 
-import requests
-from requests.auth import HTTPBasicAuth
+from src.OidcClient import OidcClient
 
 
-def test_service_account():
-    url = "http://localhost:8080/realms/pengfei-test/protocol/openid-connect/token"
-    payload = "grant_type=client_credentials"
-    headers = {'content-type': 'application/x-www-form-urlencoded'}
+@pytest.fixture
+def oidc_client():
+    keycloak_url = "http://localhost:8080"
+    realm_name = "pengfei-test"
     client_id = "pengfei-dv-app"
     client_secret = "8BJOcHtXlXpKVLGFOjGoAJ4nxo1WyNKT"
-    response = requests.request("POST", url, headers=headers, data=payload,
-                                auth=HTTPBasicAuth(client_id, client_secret))
-    oidc_token_str = response.text
-    oidc_token = json.loads(oidc_token_str)
+    return OidcClient(keycloak_server_url=keycloak_url, realm_name=realm_name,
+                      client_id=client_id, client_secret=client_secret)
+
+
+def test_get_user_token(oidc_client):
+    user_name = "pengfei"
+    user_secret = "toto"
+    oidc_token = oidc_client.get_user_token(user_name, user_secret)
+    print(f"oidc token: {oidc_token}")
     access_token = oidc_token["access_token"]
     print(f"access token: {access_token}")
+    assert access_token is not None
+
+
+def test_service_account(oidc_client):
+    oidc_token = oidc_client.get_service_account_token()
+    print(f"oidc token: {oidc_token}")
+    access_token = oidc_token["access_token"]
+    print(f"access token: {access_token}")
+    assert access_token is not None
