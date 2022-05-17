@@ -34,18 +34,22 @@ class JwtTokenValidator:
         else:
             return None
 
-    def get_token_payload(self, input_token: str) -> dict:
+    def get_token_payload(self, input_token: str, custom_secret: str = None) -> dict:
         """
         Standard way to get the jwt token payload, With verification of signature and expiration time
         :param input_token: the input token that we want to analyze
         :return:
         """
+        if custom_secret:
+            secret = custom_secret
+        else:
+            secret = self.__pub_key
         payload = None
         header = jwt.get_unverified_header(input_token)
         try:
             payload = jwt.decode(
                 input_token,
-                key=self.__pub_key,
+                key=secret,
                 algorithms=[header['alg'], ],
                 options={"verify_exp": False
                          }
