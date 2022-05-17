@@ -5,6 +5,9 @@ from src.OidcClient import OidcClient
 
 @pytest.fixture
 def oidc_client():
+    #  for keycloak version< 17.0 the url should be
+    legacy_keycloak_url= "http://localhost:8080/auth"
+    #  for keycloak version >=17.0, the url should be
     keycloak_url = "http://localhost:8080"
     realm_name = "pengfei-test"
     client_id = "pengfei-dv-app"
