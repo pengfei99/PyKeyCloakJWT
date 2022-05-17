@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 .idea
 tests/creds.py
+tests/test_OidcClient_ssp.py
