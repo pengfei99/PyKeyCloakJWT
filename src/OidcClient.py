@@ -1,8 +1,11 @@
 import json
+import logging
 
 import requests
 from keycloak import KeycloakOpenID
 from requests.auth import HTTPBasicAuth
+
+my_logger = logging.getLogger(__name__)
 
 
 class OidcClient:
@@ -20,9 +23,14 @@ class OidcClient:
     def get_service_account_token(self):
         payload = "grant_type=client_credentials"
         headers = {'content-type': 'application/x-www-form-urlencoded'}
-        endpoint = f"{self.__url}/realms/pengfei-test/protocol/openid-connect/token"
+        endpoint = f"{self.__url}/realms/{self.__realm_name}/protocol/openid-connect/token"
         response = requests.request("POST", endpoint, headers=headers, data=payload,
                                     auth=HTTPBasicAuth(self.__client_id, self.__client_secret))
-        oidc_token_str = response.text
-        oidc_token = json.loads(oidc_token_str)
-        return oidc_token
+        if response.status_code == 200:
+            oidc_token_str = response.text
+            oidc_token = json.loads(oidc_token_str)
+            return oidc_token
+        else:
+            my_logger.exception(f"Request failed with status code {response.status_code}."
+                                f"\n The error message is {response.text}")
+            return None
